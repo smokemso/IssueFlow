@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  classifier:
+    build: ./services/classifier
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+
+  backend:
+    build: ./services/backend
+    ports:
+      - "8002:8000"
+    env_file:
+      - .env
+    depends_on:
+      - classifier
+      - router
+      - executor
+
+  router:
+    build: ./services/router
+    ports:
+      - "8003:8000"
+    env_file:
+      - .env
+
+  executor:
+    build: ./services/executor
+    ports:
+      - "8004:8000"
+    env_file:
+      - .env
+    depends_on:
+      - router
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
